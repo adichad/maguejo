@@ -24,7 +24,6 @@ import akka.stream.Materializer
 import com.typesafe.config.{Config, ConfigFactory}
 import grizzled.slf4j.Logging
 import org.elasticsearch.common.logging.ESLoggerFactory
-import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory
 import org.elasticsearch.common.settings.Settings
 
 import scala.collection.JavaConversions._
@@ -48,7 +47,6 @@ object Configured extends Configured {
   configureSystem(staticProperties: _*)
   configureSystemDynamic()
   // logging configured at this point
-  ESLoggerFactory.setDefaultFactory(new Slf4jESLoggerFactory)
 
   private val configSource = configured[ConfigSource]("config.source")
   configSource.initConfig()
@@ -162,7 +160,7 @@ trait Configured extends Logging {
     System.getProperty(path(part))
 
   protected[this] def settings(part: String) = {
-    val settings = Settings.settingsBuilder()
+    val settings = Settings.builder()
     val c = conf(part)
     for( e <- c.entrySet() ) {
       try {

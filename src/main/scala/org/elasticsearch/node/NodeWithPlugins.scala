@@ -15,33 +15,16 @@
  */
 
 package org.elasticsearch.node
-
 import java.util
-
-import com.adichad.magueijo.conf.Configured
-import org.elasticsearch.Version
-import org.elasticsearch.common.cli.Terminal
+import org.elasticsearch.cli.Terminal
+import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.node.internal.InternalSettingsPreparer
 import org.elasticsearch.plugins.Plugin
 
-import scala.collection.JavaConversions._
 
 /**
   * Created by adichad on 18/08/16.
   */
-object CustomNodeBuilder extends Configured {
-  override val scope = "es"
-  implicit class NodeBuilderPimp(val nodeBuilder: NodeBuilder) {
-    def buildCustom = {
-      val settings = nodeBuilder.settings.build()
-      val plugins: util.Collection[Class[_ <: Plugin]] =
-        settings.getAsArray("plugin.types").map(t=>Class.forName(t).asInstanceOf[Class[Plugin]]).toSeq
-      new Node(InternalSettingsPreparer.prepareEnvironment(settings, Terminal.DEFAULT), Version.CURRENT, plugins)
-    }
 
-    def nodeCustom = {
-      buildCustom.start()
-    }
-  }
-
-}
+class NodeWithPlugins(settings: Settings, plugins: util.Collection[Class[_ <: Plugin]])
+  extends Node(InternalSettingsPreparer.prepareEnvironment(settings, Terminal.DEFAULT), plugins)

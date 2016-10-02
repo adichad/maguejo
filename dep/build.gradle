@@ -27,8 +27,8 @@ ext {
   scala_version      = '2.11.8'
   akka_version       = '2.4.10'
   hgdb_version       = '1.3'
-  es_version         = '2.4.0'
-  lucene_version     = '5.5.2'
+  es_version         = '5.0.0-beta1'
+  lucene_version     = '6.2.0'
   spark_version      = '1.6.2'
   es_hadoop_version  = '2.4.0'
 }
@@ -90,6 +90,7 @@ dependencies {
 
   compile     group: 'org.clapper',                  name: "grizzled-slf4j_${scala_base_version}",                       version: '1.1.0'            // logging api
   compile     group: 'org.slf4j',                    name: 'log4j-over-slf4j',                                           version: '1.7.21'
+  compile     group: 'org.apache.logging.log4j',     name: 'log4j-to-slf4j',                                             version: '2.6.2'
 
   compile     group: 'org.json4s',                   name: "json4s-native_${scala_base_version}",                        version: '3.2.11'
   compile     group: 'org.json4s',                   name: "json4s-ext_${scala_base_version}",                           version: '3.2.11'
@@ -112,17 +113,21 @@ dependencies {
 
   compile     group: 'org.apache.curator',           name: 'curator-framework',                                          version: '3.2.0'
 
-  compile     group: 'org.hypergraphdb',             name: 'hgdb',                                                       version: hgdb_version
-  compile     group: 'org.hypergraphdb',             name: 'hgbdbnative',                                                version: hgdb_version
+  //compile     group: 'org.hypergraphdb',             name: 'hgdb',                                                       version: hgdb_version
+  //compile     group: 'org.hypergraphdb',             name: 'hgbdbnative',                                                version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgbdbje',                                                    version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgdbmjson',                                                  version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgdbp2p',                                                    version: hgdb_version
-  compile     group: 'com.sleepycat',                name: 'db',                                                         version: '5.3'
+  //compile     group: 'com.sleepycat',                name: 'db',                                                         version: '5.3'
   compile     group: 'jivesoftware',                 name: 'smack',                                                      version: '3.1.0'
   compile     group: 'jivesoftware',                 name: 'smackx',                                                     version: '3.1.0'
 
   compile     group: 'org.elasticsearch',            name: "elasticsearch",                                              version: es_version         // elasticsearch
-  compile     group: 'org.elasticsearch.module',     name: "reindex",                                                    version: es_version
+  compile     group: 'org.elasticsearch.plugin',     name: "transport-netty4-client",                                    version: es_version         // elasticsearch
+  compile     group: 'org.elasticsearch.plugin',     name: "reindex-client",                                             version: es_version
+  compile     group: 'org.elasticsearch.plugin',     name: "percolator-client",                                          version: es_version
+
+
   compile     group: 'org.apache.lucene',            name: "lucene-expressions",                                         version: lucene_version     // lucene stuff not already included in elasticsearch
   compile     group: 'com.vividsolutions',           name: "jts",                                                        version: '1.13'             // geo_shape type support for elasticsearch
   compile     group: 'com.spatial4j',                name: "spatial4j",                                                  version: '0.5'              // geo_shape type support for elasticsearch

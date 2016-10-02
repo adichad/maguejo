@@ -17,20 +17,16 @@
 package com.adichad.magueijo.server
 
 import org.elasticsearch.client.Client
-import org.elasticsearch.common.cli.Terminal
-import org.elasticsearch.env.Environment
-import org.elasticsearch.node.CustomNodeBuilder._
-import org.elasticsearch.node.Node
-import org.elasticsearch.node.NodeBuilder._
-import org.elasticsearch.node.internal.InternalSettingsPreparer
-
+import org.elasticsearch.node._
+import org.elasticsearch.plugins.Plugin
+import scala.collection.JavaConversions._
 
 /**
   * Created by adichad on 17/08/16.
   */
 class Elasticsearch(val scope: String) extends Server {
-  var esNode: Node = _
-  var client: Client = _
+  lazy val esNode: Node = new NodeWithPlugins(settings("yml"), strings("plugin.types").map(t=>Class.forName(t).asInstanceOf[Class[_ <: Plugin]]))
+  lazy val client: Client = esNode.client
 
   def close(): Unit = {
     client.close()
@@ -38,12 +34,6 @@ class Elasticsearch(val scope: String) extends Server {
   }
 
   override def bind(): Unit = {
-    esNode = nodeBuilder
-      .clusterName(string("cluster.name"))
-      .local(false)
-      .data(boolean("node.data"))
-      .settings(settings("")).nodeCustom
-
-    client = esNode.client
+    esNode.start()
   }
 }

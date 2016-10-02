@@ -59,7 +59,8 @@ class HelloHandler(val scope: String) extends Actor with Configured with Extende
 
         es.admin().cluster().prepareNodesStats().execute(
           new ActionListener[NodesStatsResponse] {
-            override def onFailure(e: Throwable): Unit = {
+
+            override def onFailure(e: Exception): Unit = {
               try {
                 ctx.fail(e)
               } finally {
