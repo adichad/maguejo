@@ -23,7 +23,6 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import com.typesafe.config.{Config, ConfigFactory}
 import grizzled.slf4j.Logging
-import org.elasticsearch.common.logging.ESLoggerFactory
 import org.elasticsearch.common.settings.Settings
 
 import scala.collection.JavaConversions._
@@ -132,7 +131,9 @@ trait Configured extends Logging {
   protected[this] final def long(part: String) = config getLong path(part)
   protected[this] final def double(part: String) = config getDouble path(part)
   protected[this] final def string(part: String) = config getString path(part)
+  protected[this] final def duration(part: String) = config getDuration path(part)
   protected[this] final def duration(part: String, unit: TimeUnit) = config getDuration(path(part), unit)
+
   protected[this] final def conf(part: String = "") = config getConfig path(part)
 
   protected[this] final def sizes(part: String) = config getBytes path(part)
@@ -141,6 +142,7 @@ trait Configured extends Logging {
   protected[this] final def longs(part: String) = config getLongList path(part)
   protected[this] final def doubles(part: String) = config getDoubleList path(part)
   protected[this] final def strings(part: String) = config getStringList path(part)
+  protected[this] final def durations(part: String) = config getDurationList path(part)
   protected[this] final def durations(part: String, unit: TimeUnit) = config getDurationList(path(part), unit)
   protected[this] final def confs(part: String) = config getConfigList path(part)
 
