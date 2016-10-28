@@ -127,7 +127,6 @@ dependencies {
   compile     group: 'org.elasticsearch.plugin',     name: "reindex-client",                                             version: es_version
   compile     group: 'org.elasticsearch.plugin',     name: "percolator-client",                                          version: es_version
 
-
   compile     group: 'org.apache.lucene',            name: "lucene-expressions",                                         version: lucene_version     // lucene stuff not already included in elasticsearch
   compile     group: 'com.vividsolutions',           name: "jts",                                                        version: '1.13'             // geo_shape type support for elasticsearch
   compile     group: 'com.spatial4j',                name: "spatial4j",                                                  version: '0.5'              // geo_shape type support for elasticsearch
