@@ -27,10 +27,10 @@ ext {
   scala_version      = '2.11.8'
   akka_version       = '2.4.10'
   hgdb_version       = '1.3'
-  es_version         = '5.0.0-beta1'
+  es_version         = '5.0.0'
   lucene_version     = '6.2.0'
-  spark_version      = '1.6.2'
-  es_hadoop_version  = '2.4.0'
+  spark_version      = '2.0.1'
+  es_hadoop_version  = '5.0.0'
 }
 
 defaultTasks 'build'
@@ -137,9 +137,9 @@ dependencies {
   compile     group: 'org.apache.spark',             name: "spark-streaming_${scala_base_version}",                      version: spark_version
   compile     group: 'org.apache.spark',             name: "spark-mllib_${scala_base_version}",                          version: spark_version
   compile     group: 'org.apache.spark',             name: "spark-graphx_${scala_base_version}",                         version: spark_version
-  compile     group: 'org.apache.spark',             name: "spark-streaming-kafka_${scala_base_version}",                version: spark_version
+  //compile     group: 'org.apache.spark',             name: "spark-streaming-kafka_${scala_base_version}",                version: spark_version
 
-  compile     group: 'org.elasticsearch',            name: "elasticsearch-spark_${scala_base_version}",                  version: es_hadoop_version
+  //compile     group: 'org.elasticsearch',            name: "elasticsearch-hadoop_${scala_base_version}",                  version: es_hadoop_version
 
 
   compile     group: 'com.github.swagger-akka-http', name: 'swagger-akka-http_2.11',                                     version: '0.7.1'
