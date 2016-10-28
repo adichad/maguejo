@@ -45,7 +45,7 @@ object Launcher extends App with Configured {
       if (boolean("sysout.detach")) System.out.close()
       if (boolean("syserr.detach")) System.err.close()
 
-      val serverMap = configureds[Server]("servers", register = true)
+      val serverMap = ograph[Server]("servers", strings("servers-bind-order"), register = true)
       val servers = strings("servers-bind-order") map serverMap
 
       closeOnExit(servers)

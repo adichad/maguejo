@@ -111,6 +111,23 @@ trait Configured extends Logging {
       }.toMap[String, T]
   }
 
+
+  protected[this] final def ograph[T <: Configured](part: String, sequence: Seq[String], register: Boolean): java.util.Map[String, T] = {
+
+    val mapped = (config getAnyRef path(part)).asInstanceOf[java.util.Map[String, AnyRef]]
+    (sequence map (s=> (s, mapped(s))))
+      .map { x =>
+        val p = path(path(part), x._1)
+        if(register) {
+          val key = string(s"${path(part, x._1)}.name")
+          registry.put(key, Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T])
+          x._1 -> registry(key).asInstanceOf[T]
+        } else {
+          x._1 -> Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T]
+        }
+      }.toMap[String, T]
+  }
+
   protected[this] final def actor[T <: Actor](part: String, register: Boolean = false)
                                              (implicit system: ActorSystem, materializer: Materializer, executionContext: ExecutionContextExecutor, t: ClassTag[T]): ActorRef = {
     if(register) {
