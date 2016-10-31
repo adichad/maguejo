@@ -9,19 +9,12 @@ import scala.collection.JavaConversions._
   * Created by adichad on 14/09/16.
   */
 class Spark(val scope: String) extends Server {
-  private var sparkContext: SparkContext = _
-  private var sqlContext: SQLContext = _
-
-  override def bind(): Unit = {
-    sparkContext =
-      SparkContext.getOrCreate(
-        new SparkConf()
-          .setAll(props(""))
-      )
-
-    sqlContext = new SQLContext(sparkContext)
-    info("spark contexts bound")
-  }
+  val sparkContext: SparkContext = SparkContext.getOrCreate(
+    new SparkConf()
+      .setAll(props(""))
+  )
+  val sqlContext: SQLContext = new SQLContext(sparkContext)
+  info("spark contexts bound")
 
   override def close(): Unit = {
     sparkContext.stop()

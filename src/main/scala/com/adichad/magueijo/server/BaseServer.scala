@@ -28,26 +28,21 @@ import scala.concurrent.Future
   * Created by adichad on 02/07/16.
   */
 class BaseServer(val scope: String) extends Server with Directives {
-  var bindingFuture: Future[ServerBinding] = _
-
-  override def bind(): Unit = {
-    val akka = registered[AkkaContext]("akka")
-    implicit val actorSystem = akka.actorSystem
-    implicit val materializer = akka.materializer
-    implicit val executionContext = akka.executionContext
-    bindingFuture = Http().bindAndHandle(
-      configureds[Router]("routes").values().map(_.route).reduceLeft(_ ~ _),
-      interface = string("host"), port = int("port")
-    )
-
-    bindingFuture.onSuccess {
-      case r => info(s"${string("name")} bound: $r")
-    }
-    bindingFuture.onFailure {
-      case e: Throwable =>
-        error(s"error binding ${string("name")}", e)
-        throw e
-    }
+  val akka = registered[AkkaContext]("akka")
+  implicit val actorSystem = akka.actorSystem
+  implicit val materializer = akka.materializer
+  implicit val executionContext = akka.executionContext
+  lazy val bindingFuture = Http().bindAndHandle(
+    configureds[Router]("routes").values().map(_.route).reduceLeft(_ ~ _),
+    interface = string("host"), port = int("port")
+  )
+  bindingFuture.onSuccess {
+    case r => info(s"${string("name")} bound: $r")
+  }
+  bindingFuture.onFailure {
+    case e: Throwable =>
+      error(s"error binding ${string("name")}", e)
+      throw e
   }
 
   override def close(): Unit = {

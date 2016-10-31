@@ -30,7 +30,6 @@ import scala.collection.JavaConversions._
 object Launcher extends App with Configured {
   override val scope = ""
 
-  //val x = new SerialReader()
   try {
     info(sysprop("component.name"))
     info(s"java.library.path=${sysprop("java.library.path")}")
@@ -49,7 +48,6 @@ object Launcher extends App with Configured {
       val servers = strings("servers-bind-order") map serverMap
 
       closeOnExit(servers)
-      servers foreach (_.bind())
     }
   } catch {
     case e: Throwable =>

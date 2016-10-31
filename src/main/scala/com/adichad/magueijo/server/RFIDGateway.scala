@@ -22,52 +22,43 @@ import com.thingmagic._
   * Created by adichad on 15/08/16.
   */
 class RFIDGateway(val scope: String) extends Server {
-  var reader: Reader = _
+  lazy val reader: Reader = Reader.create(string("reader-uri"))
+  reader.connect()
+  reader.paramList().sorted.foreach { p =>
+    info(
+      p + "=" +
+        (
+          try {
+            reader.paramGet(p) match {
+              case v: Array[Array[Int]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
+              case v: Array[Array[Any]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
+              case v: Array[Array[AnyRef]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
+              case v: Array[Int]=>"["+v.map(_.toString).mkString(", ")+"]"
+              case v: Array[Long]=>"["+v.map(_.toString).mkString(", ")+"]"
+              case v: Array[Float]=>"["+v.map(_.toString).mkString(", ")+"]"
+              case v: Array[Double]=>"["+v.map(_.toString).mkString(", ")+"]"
 
-  private def connectReader(): Unit = {
-    reader = Reader.create(string("reader-uri"))
-    reader.connect()
-  }
-
-  override def bind(): Unit = {
-    connectReader()
-
-    reader.paramList().sorted.foreach { p =>
-      info(
-        p + "=" +
-          (
-            try {
-              reader.paramGet(p) match {
-                case v: Array[Array[Int]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
-                case v: Array[Array[Any]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
-                case v: Array[Array[AnyRef]]=>"["+v.map(x=>"["+x.map(_.toString).mkString(", ")+"]").mkString(", ")+"]"
-                case v: Array[Int]=>"["+v.map(_.toString).mkString(", ")+"]"
-                case v: Array[Long]=>"["+v.map(_.toString).mkString(", ")+"]"
-                case v: Array[Float]=>"["+v.map(_.toString).mkString(", ")+"]"
-                case v: Array[Double]=>"["+v.map(_.toString).mkString(", ")+"]"
-
-                case v: Array[Any]=>"["+v.map(_.toString).mkString(", ")+"]"
-                case v: Array[AnyRef]=>"["+v.map(_.toString).mkString(", ")+"]"
-                case v: Any => v.toString
-              }
+              case v: Array[Any]=>"["+v.map(_.toString).mkString(", ")+"]"
+              case v: Array[AnyRef]=>"["+v.map(_.toString).mkString(", ")+"]"
+              case v: Any => v.toString
             }
-            catch {
-              case e: Exception=>e.getMessage
-            }
+          }
+          catch {
+            case e: Exception=>e.getMessage
+          }
           )
-      )
-    }
-
-    val power = reader.paramGet("/reader/radio/readPower").asInstanceOf[Int]
-
-    reader.read(5000).foreach { trd =>
-      import trd._
-      val distance = math.pow(10, (power - getRssi) / 20.0d)
-      info(s"EPC:$epcString\tTIME:$getTime\tFREQ:$getFrequency\tANT:$getAntenna\tCOUNT:$getReadCount\tRSSI:$getRssi\tDIST:$distance\tPHASE:$getPhase")
-    }
-
-    info("rfid-reader connected")
+    )
   }
+
+  lazy val power = reader.paramGet("/reader/radio/readPower").asInstanceOf[Int]
+
+  reader.read(5000).foreach { trd =>
+    import trd._
+    val distance = math.pow(10, (power - getRssi) / 20.0d)
+    info(s"EPC:$epcString\tTIME:$getTime\tFREQ:$getFrequency\tANT:$getAntenna\tCOUNT:$getReadCount\tRSSI:$getRssi\tDIST:$distance\tPHASE:$getPhase")
+  }
+
+  info("rfid-reader connected")
 
   override def close(): Unit = {
     reader.destroy()

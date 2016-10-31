@@ -25,18 +25,11 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by adichad on 12/08/16.
   */
 class AkkaContext(val scope: String) extends Server {
-  implicit var actorSystem: ActorSystem = _
-  implicit var materializer: ActorMaterializer = _
-  implicit var executionContext: ExecutionContextExecutor = _
-  var noop: ActorRef = _
+  implicit lazy val actorSystem: ActorSystem = ActorSystem(string("name"), conf("akka"))
+  implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
+  implicit lazy val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
+  lazy val noop: ActorRef = actorSystem.actorOf(Props.empty)
 
-  override def bind(): Unit = {
-    actorSystem = ActorSystem(string("name"), conf("akka"))
-    materializer = ActorMaterializer()
-    executionContext = actorSystem.dispatcher
-    noop = actorSystem.actorOf(Props.empty)
-    info("akka bound")
-  }
 
   override def close(): Unit = {
     materializer.shutdown()

@@ -27,13 +27,11 @@ import scala.collection.JavaConversions._
 class Elasticsearch(val scope: String) extends Server {
   lazy val esNode: Node = new NodeWithPlugins(settings("yml"), strings("plugin.types").map(t=>Class.forName(t).asInstanceOf[Class[_ <: Plugin]]))
   lazy val client: Client = esNode.client
+  esNode.start()
 
   def close(): Unit = {
     client.close()
     esNode.close()
   }
 
-  override def bind(): Unit = {
-    esNode.start()
-  }
 }

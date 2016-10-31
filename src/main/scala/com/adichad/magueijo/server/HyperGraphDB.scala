@@ -23,19 +23,12 @@ import org.hypergraphdb._
   * Created by adichad on 15/08/16.
   */
 class HyperGraphDB(val scope: String) extends Server {
-  var hgdb: HyperGraph = _
-  //val factory = hgdb.getHandleFactory
-  ///factory.makeHandle()
-
+  lazy val c = new HGConfiguration()
+  c.setTransactional(boolean("transactional"))
+  c.setStoreImplementation(Class.forName(string("storage-impl")).getConstructor().newInstance().asInstanceOf[HGStoreImplementation])
+  lazy val hgdb = HGEnvironment.get(string("path.data"), c)
+  info("hypergraph-db instantiated")
   def db = hgdb
-
-  override def bind(): Unit = {
-    val c = new HGConfiguration()
-    c.setTransactional(boolean("transactional"))
-    c.setStoreImplementation(Class.forName(string("storage-impl")).getConstructor().newInstance().asInstanceOf[HGStoreImplementation])
-    hgdb = HGEnvironment.get(string("path.data"), c)
-    info("hypergraph-db instantiated")
-  }
 
   override def close(): Unit = {
     hgdb.close()
