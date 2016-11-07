@@ -20,7 +20,6 @@ import java.io.{File, IOException, PrintWriter}
 import java.lang.management.ManagementFactory
 
 import com.adichad.magueijo.conf.Configured
-import com.adichad.magueijo.resource.ManagedResource
 
 import scala.collection.JavaConversions._
 
@@ -40,7 +39,6 @@ object Launcher extends App with Configured {
       info("Log path current: " + sysprop("log.path.current"))
       info("Log path archive: " + sysprop("log.path.archive"))
 
-      writePID(sysprop("daemon.pidfile"))
       if (boolean("sysout.detach")) System.out.close()
       if (boolean("syserr.detach")) System.err.close()
 
@@ -52,32 +50,5 @@ object Launcher extends App with Configured {
       error("fatal", e)
       throw e
   }
-
-  private[this] def writePID(destPath: String) = {
-    def getPid(fallback: String) = {
-      val jvmName = ManagementFactory.getRuntimeMXBean.getName
-      val index = jvmName indexOf '@'
-      if (index > 0) {
-        try {
-          jvmName.substring(0, index).toLong.toString
-        } catch {
-          case e: NumberFormatException ⇒ fallback
-        }
-      } else fallback
-    }
-
-    val pidFile = new File(destPath)
-    if (pidFile.createNewFile) {
-      val pid = getPid("unknown-pid")
-      (new PrintWriter(pidFile) append pid).close()
-      pidFile.deleteOnExit()
-      info(s"pid file [pid]: $destPath [$pid]")
-      pid
-    } else {
-      throw new IOException(s"pid file already exists at: $destPath")
-    }
-  }
-
-
 
 }

@@ -16,6 +16,8 @@
 
 package com.adichad.magueijo.conf
 
+import java.io.{File, IOException, PrintWriter}
+import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.Properties
 
@@ -44,7 +46,7 @@ object Configured extends Configured {
     override def run() = {
       try {
         info(string("component.name")+" shutdown initiated")
-        closeables.foreach(_.close)
+        closeables.foreach(_.close())
         info("resources terminated")
         info(string("component.name")+" shutdown complete")
       } catch {
@@ -52,6 +54,8 @@ object Configured extends Configured {
       }
     }
   }
+
+
 
   override protected[this] val scope = ""
   private val originalConfig =
@@ -61,6 +65,30 @@ object Configured extends Configured {
   configureSystem(staticProperties: _*)
   configureSystemDynamic()
   // logging configured at this point
+
+  private def getPid(fallback: String) = {
+    val jvmName = ManagementFactory.getRuntimeMXBean.getName
+    val index = jvmName indexOf '@'
+    if (index > 0) {
+      try {
+        jvmName.substring(0, index).toLong.toString
+      } catch {
+        case e: NumberFormatException ⇒ fallback
+      }
+    } else fallback
+  }
+
+  val destPath = string("daemon.pidfile")
+  val pidFile = new File(destPath)
+  if (pidFile.createNewFile) {
+    val pid = getPid("unknown-pid")
+    (new PrintWriter(pidFile) append pid).close()
+    pidFile.deleteOnExit()
+    info(s"pid file [pid]: $destPath [$pid]")
+    pid
+  } else {
+    throw new IOException(s"pid file already exists at: $destPath")
+  }
 
   private val configSource = configured[ConfigSource]("config.source")
   configSource.initConfig()

@@ -31,7 +31,7 @@ trait ExtendedDirectives extends Directives {
 
 
   //this directive adds access control headers to normal responses
-  private def addAccessControlHeaders: Directive0 = {
+  private def accessControlHeaders: Directive0 = {
     mapResponseHeaders { headers =>
       `Access-Control-Allow-Origin`.* +:
         `Access-Control-Allow-Credentials`(true) +:
@@ -41,7 +41,7 @@ trait ExtendedDirectives extends Directives {
   }
 
   //this handles preflight OPTIONS requests. TODO: see if can be done with rejection handler,
-  //otherwise has to be under addAccessControlHeaders
+  //otherwise has to be under accessControlHeaders
   private def preflightRequestHandler: Route = options {
     complete(HttpResponse(StatusCodes.OK).withHeaders(
       `Access-Control-Allow-Methods`(OPTIONS, POST, PUT, GET, DELETE)
@@ -49,7 +49,7 @@ trait ExtendedDirectives extends Directives {
     )
   }
 
-  def corsHandler(r: Route): Route = addAccessControlHeaders {
+  def corsHandler(r: Route): Route = accessControlHeaders {
     preflightRequestHandler ~ r
   }
 

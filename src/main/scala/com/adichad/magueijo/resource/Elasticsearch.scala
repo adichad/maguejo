@@ -30,8 +30,15 @@ class Elasticsearch(val scope: String) extends ManagedResource {
   esNode.start()
 
   def close(): Unit = {
-    client.close()
-    esNode.close()
+    try {
+      client.close()
+      esNode.close()
+    } catch {
+      case e: ClassNotFoundException => error("exception", e)
+      case e: NoClassDefFoundError => error("error", e)
+    } finally {
+      info("elasticsearch node stopped")
+    }
   }
 
 }
