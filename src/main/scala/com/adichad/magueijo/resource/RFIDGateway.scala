@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
 import com.thingmagic._
 
 /**
   * Created by adichad on 15/08/16.
   */
-class RFIDGateway(val scope: String) extends Server {
+class RFIDGateway(val scope: String) extends ManagedResource {
   lazy val reader: Reader = Reader.create(string("reader-uri"))
   reader.connect()
   reader.paramList().sorted.foreach { p =>

@@ -25,7 +25,7 @@ apply from: 'gradle.properties'
 ext {
   scala_base_version = '2.11'
   scala_version      = '2.11.8'
-  akka_version       = '2.4.10'
+  akka_version       = '2.4.11'
   hgdb_version       = '1.3'
   es_version         = '5.0.0'
   lucene_version     = '6.2.0'
@@ -101,7 +101,6 @@ dependencies {
   compile     group: 'com.typesafe.akka',            name: "akka-slf4j_${scala_base_version}",                           version: akka_version
   compile     group: 'com.typesafe.akka',            name: "akka-http-core_${scala_base_version}",                       version: akka_version
   compile     group: 'com.typesafe.akka',            name: "akka-http-core_${scala_base_version}",                       version: akka_version
-  compile     group: 'com.typesafe.akka',            name: "akka-http-experimental_${scala_base_version}",               version: akka_version
   compile     group: 'com.typesafe.akka',            name: "akka-stream_${scala_base_version}",                          version: akka_version
   compile     group: 'com.typesafe.akka',            name: "akka-cluster_${scala_base_version}",                         version: akka_version
   compile     group: 'com.typesafe.akka',            name: "akka-cluster-sharding_${scala_base_version}",                version: akka_version
@@ -113,12 +112,9 @@ dependencies {
 
   compile     group: 'org.apache.curator',           name: 'curator-framework',                                          version: '3.2.0'
 
-  //compile     group: 'org.hypergraphdb',             name: 'hgdb',                                                       version: hgdb_version
-  //compile     group: 'org.hypergraphdb',             name: 'hgbdbnative',                                                version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgbdbje',                                                    version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgdbmjson',                                                  version: hgdb_version
   compile     group: 'org.hypergraphdb',             name: 'hgdbp2p',                                                    version: hgdb_version
-  //compile     group: 'com.sleepycat',                name: 'db',                                                         version: '5.3'
   compile     group: 'jivesoftware',                 name: 'smack',                                                      version: '3.1.0'
   compile     group: 'jivesoftware',                 name: 'smackx',                                                     version: '3.1.0'
 
@@ -138,7 +134,7 @@ dependencies {
   compile     group: 'org.apache.spark',             name: "spark-graphx_${scala_base_version}",                         version: spark_version
   //compile     group: 'org.apache.spark',             name: "spark-streaming-kafka_${scala_base_version}",                version: spark_version
 
-  //compile     group: 'org.elasticsearch',            name: "elasticsearch-hadoop_${scala_base_version}",                  version: es_hadoop_version
+  //compile     group: 'org.elasticsearch',            name: "elasticsearch-hadoop",                                       version: es_hadoop_version
 
 
   compile     group: 'com.github.swagger-akka-http', name: 'swagger-akka-http_2.11',                                     version: '0.7.1'

@@ -24,7 +24,7 @@ import com.adichad.magueijo.conf.Configured
 import com.adichad.magueijo.http.directives.{ExtendedDirectives, ImperativeRequestContext}
 import com.adichad.magueijo.protocol.JsonSupport
 import com.adichad.magueijo.protocol.response.ElasticsearchStats
-import com.adichad.magueijo.server.{Elasticsearch, HyperGraphDB}
+import com.adichad.magueijo.resource.{Elasticsearch, HyperGraphDB}
 import org.elasticsearch.action.ActionListener
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse
 import org.json4s.jackson.JsonMethods._

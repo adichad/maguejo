@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
-import org.hypergraphdb.storage.HGStoreImplementation
-import org.hypergraphdb._
+import org.elasticsearch.client.Client
+import org.elasticsearch.node._
+import org.elasticsearch.plugins.Plugin
+import scala.collection.JavaConversions._
 
 /**
-  * Created by adichad on 15/08/16.
+  * Created by adichad on 17/08/16.
   */
-class HyperGraphDB(val scope: String) extends Server {
-  lazy val c = new HGConfiguration()
-  c.setTransactional(boolean("transactional"))
-  c.setStoreImplementation(Class.forName(string("storage-impl")).getConstructor().newInstance().asInstanceOf[HGStoreImplementation])
-  lazy val hgdb = HGEnvironment.get(string("path.data"), c)
-  info("hypergraph-db instantiated")
-  def db = hgdb
+class Elasticsearch(val scope: String) extends ManagedResource {
+  lazy val esNode: Node = new NodeWithPlugins(settings("yml"), strings("plugin.types").map(t=>Class.forName(t).asInstanceOf[Class[_ <: Plugin]]))
+  lazy val client: Client = esNode.client
+  esNode.start()
 
-  override def close(): Unit = {
-    hgdb.close()
+  def close(): Unit = {
+    client.close()
+    esNode.close()
   }
+
 }

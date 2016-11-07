@@ -20,7 +20,7 @@ import java.io.{File, IOException, PrintWriter}
 import java.lang.management.ManagementFactory
 
 import com.adichad.magueijo.conf.Configured
-import com.adichad.magueijo.server.Server
+import com.adichad.magueijo.resource.ManagedResource
 
 import scala.collection.JavaConversions._
 
@@ -44,10 +44,8 @@ object Launcher extends App with Configured {
       if (boolean("sysout.detach")) System.out.close()
       if (boolean("syserr.detach")) System.err.close()
 
-      val serverMap = ograph[Server]("servers", strings("servers-bind-order"), register = true)
-      val servers = strings("servers-bind-order") map serverMap
+      resources("resources", strings("resource-construct-order"))
 
-      closeOnExit(servers)
     }
   } catch {
     case e: Throwable =>
@@ -80,20 +78,6 @@ object Launcher extends App with Configured {
     }
   }
 
-  private[this] def closeOnExit(closeables: Seq[AutoCloseable]) = {
-    Runtime.getRuntime addShutdownHook new Thread {
-      override def run() = {
-        try {
-          info(string("component.name")+" shutdown initiated")
-          closeables.foreach(_.close)
-          info("resources terminated")
-          info(string("component.name")+" shutdown complete")
-        } catch {
-          case e: Throwable => error("shutdown hook failure", e)
-        }
-      }
-    }
-  }
 
 
 }

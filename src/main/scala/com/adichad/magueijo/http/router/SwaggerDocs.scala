@@ -18,7 +18,7 @@ package com.adichad.magueijo.http.router
 
 import akka.http.scaladsl.model.StatusCodes._
 import com.adichad.magueijo.http.router.hello.Hello
-import com.adichad.magueijo.server.AkkaContext
+import com.adichad.magueijo.resource.AkkaContext
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.{HasActorSystem, SwaggerHttpService}
 

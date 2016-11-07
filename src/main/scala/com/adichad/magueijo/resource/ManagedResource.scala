@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
-import org.elasticsearch.client.Client
-import org.elasticsearch.node._
-import org.elasticsearch.plugins.Plugin
-import scala.collection.JavaConversions._
+import com.adichad.magueijo.conf.Configured
 
 /**
-  * Created by adichad on 17/08/16.
+  * Created by adichad on 02/07/16.
   */
-class Elasticsearch(val scope: String) extends Server {
-  lazy val esNode: Node = new NodeWithPlugins(settings("yml"), strings("plugin.types").map(t=>Class.forName(t).asInstanceOf[Class[_ <: Plugin]]))
-  lazy val client: Client = esNode.client
-  esNode.start()
-
-  def close(): Unit = {
-    client.close()
-    esNode.close()
-  }
-
-}
+trait ManagedResource extends Configured with AutoCloseable

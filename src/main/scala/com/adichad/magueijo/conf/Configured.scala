@@ -21,6 +21,7 @@ import java.util.Properties
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
+import com.adichad.magueijo.resource.ManagedResource
 import com.typesafe.config.{Config, ConfigFactory}
 import grizzled.slf4j.Logging
 import org.elasticsearch.common.settings.Settings
@@ -38,6 +39,20 @@ import scala.reflect.ClassTag
 
 object Configured extends Configured {
   private val registry: concurrent.Map[String, Any] = new ConcurrentHashMap[String, Any]().asScala
+  private val closeables = new java.util.Vector[AutoCloseable]
+  Runtime.getRuntime addShutdownHook new Thread {
+    override def run() = {
+      try {
+        info(string("component.name")+" shutdown initiated")
+        closeables.foreach(_.close)
+        info("resources terminated")
+        info(string("component.name")+" shutdown complete")
+      } catch {
+        case e: Throwable => error("shutdown hook failure", e)
+      }
+    }
+  }
+
   override protected[this] val scope = ""
   private val originalConfig =
     configure("environment", "application", "environment_defaults", "application_defaults")
@@ -78,7 +93,7 @@ object Configured extends Configured {
 
 trait Configured extends Logging {
   private val c = Configured
-  import Configured.{config, registry}
+  import Configured.{config, registry, closeables}
   protected[this] val scope: String
 
   private[this] final def path(part: String) =
@@ -101,31 +116,37 @@ trait Configured extends Logging {
     (config getAnyRef path(part)).asInstanceOf[java.util.Map[String, AnyRef]]
       .map { x =>
         val p = path(path(part), x._1)
+        val obj = Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T]
+        obj match {
+          case o: AutoCloseable => closeables.add(o)
+          case _ =>
+        }
         if(register) {
           val key = string(s"${path(part, x._1)}.name")
-          registry.put(key, Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T])
+          registry.put(key, obj)
           x._1 -> registry(key).asInstanceOf[T]
         } else {
-          x._1 -> Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T]
+          x._1 -> obj
         }
       }.toMap[String, T]
   }
 
 
-  protected[this] final def ograph[T <: Configured](part: String, sequence: Seq[String], register: Boolean): java.util.Map[String, T] = {
-
+  protected[this] final def resources(part: String, sequence: Seq[String]): Unit = {
     val mapped = (config getAnyRef path(part)).asInstanceOf[java.util.Map[String, AnyRef]]
     (sequence map (s=> (s, mapped(s))))
       .map { x =>
         val p = path(path(part), x._1)
-        if(register) {
-          val key = string(s"${path(part, x._1)}.name")
-          registry.put(key, Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T])
-          x._1 -> registry(key).asInstanceOf[T]
-        } else {
-          x._1 -> Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[T]
+        val resource = Class.forName(string(s"${path(part, x._1)}.type")).getConstructor(classOf[String]).newInstance(p).asInstanceOf[ManagedResource]
+        resource match {
+          case o: AutoCloseable => closeables.add(o)
+          case _ =>
         }
-      }.toMap[String, T]
+        val key = string(s"${path(part, x._1)}.name")
+        registry.put(key, resource)
+        x._1 -> registry(key).asInstanceOf[ManagedResource]
+      }.toMap[String, Configured]
+
   }
 
   protected[this] final def actor[T <: Actor](part: String, register: Boolean = false)
@@ -190,6 +211,5 @@ trait Configured extends Logging {
     }
     settings.build()
   }
-
 
 }

@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
-import com.adichad.magueijo.conf.Configured
+import org.hypergraphdb.storage.HGStoreImplementation
+import org.hypergraphdb._
 
 /**
-  * Created by adichad on 02/07/16.
+  * Created by adichad on 15/08/16.
   */
-trait Server extends Configured with AutoCloseable {
+class HyperGraphDB(val scope: String) extends ManagedResource {
+  lazy val c = new HGConfiguration()
+  c.setTransactional(boolean("transactional"))
+  c.setStoreImplementation(Class.forName(string("storage-impl")).getConstructor().newInstance().asInstanceOf[HGStoreImplementation])
+  lazy val hgdb = HGEnvironment.get(string("path.data"), c)
+  info("hypergraph-db instantiated")
+  def db = hgdb
+
+  override def close(): Unit = {
+    hgdb.close()
+  }
 }

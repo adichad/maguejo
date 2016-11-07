@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 /**
   * Created by adichad on 02/07/16.
   */
-class BaseServer(val scope: String) extends Server with Directives {
+class BaseServer(val scope: String) extends ManagedResource with Directives {
   val akka = registered[AkkaContext]("akka")
   implicit val actorSystem = akka.actorSystem
   implicit val materializer = akka.materializer

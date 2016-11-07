@@ -20,7 +20,7 @@ import javax.ws.rs.Path
 
 import akka.http.scaladsl.server._
 import com.adichad.magueijo.http.router.Router
-import com.adichad.magueijo.server.AkkaContext
+import com.adichad.magueijo.resource.AkkaContext
 import io.swagger.annotations.{Api, ApiOperation}
 
 /**

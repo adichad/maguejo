@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.server
+package com.adichad.magueijo.resource
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
@@ -24,7 +24,7 @@ import scala.concurrent.ExecutionContextExecutor
 /**
   * Created by adichad on 12/08/16.
   */
-class AkkaContext(val scope: String) extends Server {
+class AkkaContext(val scope: String) extends ManagedResource {
   implicit lazy val actorSystem: ActorSystem = ActorSystem(string("name"), conf("akka"))
   implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
   implicit lazy val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
