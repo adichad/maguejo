@@ -16,11 +16,7 @@
 
 package com.adichad.magueijo
 
-import java.io.{File, IOException, PrintWriter}
-import java.lang.management.ManagementFactory
-
 import com.adichad.magueijo.conf.Configured
-
 import scala.collection.JavaConversions._
 
 /**

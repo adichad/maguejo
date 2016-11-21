@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.adichad.magueijo.http.router.hello
+package com.adichad.magueijo.http.routes.hello
 
 import java.util.concurrent.TimeUnit
 

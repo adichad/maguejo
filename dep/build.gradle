@@ -29,7 +29,7 @@ ext {
   hgdb_version       = '1.3'
   es_version         = '5.0.0'
   lucene_version     = '6.2.0'
-  spark_version      = '2.0.1'
+  spark_version      = '2.0.2'
   es_hadoop_version  = '5.0.0'
 }
 
@@ -139,6 +139,12 @@ dependencies {
 
   compile     group: 'com.github.swagger-akka-http', name: 'swagger-akka-http_2.11',                                     version: '0.7.1'
   compile     group: 'net.java.dev.jna',             name: 'jna',                                                        version: '4.2.2'
+
+  compile     group: 'io.circe',                     name: "circe-core_${scala_base_version}",                           version: '0.5.4'
+  compile     group: 'io.circe',                     name: "circe-generic_${scala_base_version}",                        version: '0.5.4'
+  compile     group: 'io.circe',                     name: "circe-parser_${scala_base_version}",                         version: '0.5.4'
+
+
   compile     name: 'mercuryapi'
   compile     name: 'ltkjava-1.0.0.7'
   compile     name: 'ltkthingmagic'

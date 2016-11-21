@@ -40,6 +40,7 @@ import scala.reflect.ClassTag
   */
 
 object Configured extends Configured {
+  override protected[this] val scope = ""
   private val registry: concurrent.Map[String, Any] = new ConcurrentHashMap[String, Any]().asScala
   private val closeables = new java.util.Vector[AutoCloseable]
   Runtime.getRuntime addShutdownHook new Thread {
@@ -56,8 +57,6 @@ object Configured extends Configured {
   }
 
 
-
-  override protected[this] val scope = ""
   private val originalConfig =
     configure("environment", "application", "environment_defaults", "application_defaults")
   private var config = originalConfig
